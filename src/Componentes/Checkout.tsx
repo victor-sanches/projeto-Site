@@ -21,6 +21,7 @@ interface CustomerData {
 
 export const Checkout: React.FC<CheckoutProps> = ({ isOpen, onClose, items, total }) => {
   const [step, setStep] = useState<'form' | 'payment'>('form');
+  const [pixFechado, setPixFechado] = useState(false);
   const [customerData, setCustomerData] = useState<CustomerData>({
     name: '',
     email: '',
@@ -43,9 +44,33 @@ export const Checkout: React.FC<CheckoutProps> = ({ isOpen, onClose, items, tota
     setCustomerData(prev => ({ ...prev, [field]: value }));
   };
 
-  const handleSubmitForm = (e: React.FormEvent) => {
+  const handleSubmitForm = async (e: React.FormEvent) => {
     e.preventDefault();
-    setStep('payment');
+  
+    try {
+      const response = await fetch('/api/pedido', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          nome: customerData.name,
+          email: customerData.email,
+          telefone: customerData.phone,
+          endereco: customerData.address,
+          cidade: customerData.city,
+          cep: customerData.zipCode,
+          total,
+          items,
+        }),
+      });
+  
+      if (!response.ok) {
+        throw new Error('Erro ao salvar pedido');
+      }
+  
+      setStep('payment');
+    } catch (error) {
+      alert('Não foi possível salvar seu pedido. Tente novamente.');
+    }
   };
 
   const isFormValid = Object.values(customerData).every(value => value.trim() !== '');
@@ -55,7 +80,12 @@ export const Checkout: React.FC<CheckoutProps> = ({ isOpen, onClose, items, tota
       <div className="bg-white rounded-xl max-w-4xl w-full max-h-[90vh] overflow-y-auto">
         <div className="flex items-center justify-between p-6 border-b">
           <h2 className="text-2xl font-bold text-gray-900">
-            {step === 'form' ? 'Dados para Entrega' : 'Pagamento via PIX'}
+          {step === 'form'
+          ? 'Dados para Entrega'
+          : pixFechado
+          ? 'Pagamento Pendente'
+          : 'Pagamento via PIX'}
+
           </h2>
           <button
             onClick={onClose}
@@ -192,13 +222,49 @@ export const Checkout: React.FC<CheckoutProps> = ({ isOpen, onClose, items, tota
             </button>
           </form>
         ) : (
-          <PixGenerator
-            customerData={customerData}
-            items={items}
-            total={total}
-            onBack={() => setStep('form')}
-          />
-        )}
+          <div className="p-6 space-y-4">
+          {/* Alerta de status */}
+          <div className="p-4 bg-yellow-100 text-yellow-800 rounded-lg border border-yellow-300 flex items-center gap-2">
+            <p className="font-medium">Status: <strong>Aguardando pagamento</strong></p>
+          </div>
+      
+          {/* PIX visível se ainda não foi fechado */}
+          {!pixFechado && (
+            <PixGenerator
+              customerData={customerData}
+              items={items}
+              total={total}
+              onBack={() => setPixFechado(true)}
+            />
+          )}
+      
+          {/* Se o usuário fechou o PIX */}
+          {pixFechado && (
+            <div className="p-4 bg-gray-100 rounded-lg space-y-3">
+              <p className="text-gray-800">
+                O pagamento ainda não foi confirmado. Deseja tentar novamente ou cancelar a compra?
+              </p>
+              <div className="flex gap-4">
+                <button
+                  onClick={() => setPixFechado(false)}
+                  className="px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700"
+                >
+                  Reabrir pagamento
+                </button>
+                <button
+                  onClick={() => {
+                    setStep('form');
+                    setPixFechado(false);
+                  }}
+                  className="px-4 py-2 bg-red-500 text-white rounded-lg hover:bg-red-600"
+                >
+                  Cancelar compra
+                </button>
+              </div>
+            </div>
+          )}
+        </div>
+      )}
       </div>
     </div>
   );
