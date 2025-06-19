@@ -348,3 +348,8 @@
     @apply bg-gray-800 border-gray-700;
   }
 }
+@media (prefers-color-scheme: dark) {
+  .card-hover-dark:hover {
+    box-shadow: 0 12px 24px rgba(0, 0, 0, 0.7);
+  }
+}

@@ -29,15 +29,18 @@ export const ProductCard: React.FC<ProductCardProps> = ({ product, onAddToCart }
     }).format(price);
   };
 
-  return (
-    <div className="bg-white rounded-xl shadow-md hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1 border border-gray-100">
-      <div className="aspect-w-16 aspect-h-12 bg-gray-100 rounded-t-xl overflow-hidden">
-        <img
-          src={product.image}
-          alt={product.name}
-          className="w-full h-48 object-contain rounded"
-        />
-      </div>
+ return (
+  <div
+    className="bg-white dark:bg-gray-300 rounded-xl shadow-md hover:shadow-xl transition-all duration-500 transform hover:-translate-y-1 border border-gray-200 dark:border-gray-200 dark:hover:shadow-2xl"
+    style={{ boxShadow: '0 12px 24px rgba(56, 56, 56, 0.7)' }}
+  >
+    <div className="aspect-w-16 aspect-h-12 bg-gray-100 rounded-t-xl overflow-hidden">
+      <img
+        src={product.image}
+        alt={product.name}
+        className="w-full h-48 object-contain rounded"
+      />
+    </div>
       
       <div className="p-6">
         <div className="flex items-center justify-between mb-2">
