@@ -20,6 +20,6 @@
       "noUnusedParameters": true,
       "noFallthroughCasesInSwitch": true
     },
-    "include": ["src", "BackEnd/models", "BackEnd/lib", "BackEnd/mongodb.ts"]
+    "include": ["src", "src/models", "BackEnd/lib", "BackEnd/mongodb.ts", "BackEnd/Pedido.js", "BackEnd/mongodb.js", "BackEnd/dist"]
   }
   

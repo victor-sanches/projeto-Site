@@ -3,7 +3,7 @@ import mongoose from 'mongoose';
 import cors from 'cors';
 import dotenv from 'dotenv';
 
-import { Pedido } from './models/Pedido';
+import { Pedido } from './models/Pedido.ts';
 
 dotenv.config();
 

@@ -4,7 +4,7 @@
   "type": "module",
   "scripts": {
     "build": "tsc",
-    "start": "node dist/Pedidos.ts"
+    "start": "node dist/Pedido.js"
   },
   "dependencies": {
     "express": "^4.18.2",
